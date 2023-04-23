@@ -68,23 +68,27 @@ public class BankServiceImpl implements BankService {
 	 * @throws BankAccountNotFoundException, NegativeBalanceAmountException
 	 */
 	@Override
-	public BankDto updateAccount(Long id, BankDto bankDto) throws NegativeBalanceAmountException, BankAccountNotFoundException {
-		Bank existingAcc = bankRepository.findById(id).orElseThrow(()-> new BankAccountNotFoundException("No Bank account found with account no: "+id));
+	public BankDto updateAccount(Long id, BankDto bankDto) throws NegativeBalanceAmountException {
+		Bank existingAcc = bankRepository.findById(id).orElse(null);
 
 		Bank bank = AutoBankMapper.MAPPER.mapToBank(bankDto);
 		bank.setBalanceAmount(bank.getDepositAmount() - bank.getWithdrawAmount());
 		if(bank.getBalanceAmount() < 0)
 			throw new NegativeBalanceAmountException("Withdraw amount cannot be greater than deposit amount");
 		
-		existingAcc.setName(bank.getName());
-		existingAcc.setDepositAmount(bank.getDepositAmount());
-		existingAcc.setWithdrawAmount(bank.getWithdrawAmount());
-		existingAcc.setBalanceAmount(bank.getBalanceAmount());
-		existingAcc.setPermanentAddress(bank.getPermanentAddress());
-		existingAcc.setCommunicationAddress(bank.getCommunicationAddress());
-		existingAcc.setNotes(bank.getNotes());
+		if(existingAcc!=null) {
+			existingAcc.setName(bank.getName());
+			existingAcc.setDepositAmount(bank.getDepositAmount());
+			existingAcc.setWithdrawAmount(bank.getWithdrawAmount());
+			existingAcc.setBalanceAmount(bank.getBalanceAmount());
+			existingAcc.setPermanentAddress(bank.getPermanentAddress());
+			existingAcc.setCommunicationAddress(bank.getCommunicationAddress());
+			existingAcc.setNotes(bank.getNotes());
 		
-		return AutoBankMapper.MAPPER.mapToBankDto(bankRepository.save(existingAcc));
+			return AutoBankMapper.MAPPER.mapToBankDto(bankRepository.save(existingAcc));
+		}else {
+			return AutoBankMapper.MAPPER.mapToBankDto(bankRepository.save(bank)); 
+		}
 	}
 
 	/**
