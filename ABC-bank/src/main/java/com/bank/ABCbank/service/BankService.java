@@ -15,7 +15,7 @@ public interface BankService {
 
 	BankDto addAccount(@Valid BankDto bankDto) throws NegativeBalanceAmountException;
 	BankDto getAccountById(Long id) throws BankAccountNotFoundException;
-	BankDto updateAccount(Long id, BankDto bankDto) throws NegativeBalanceAmountException, BankAccountNotFoundException;
+	BankDto updateAccount(Long id, BankDto bankDto) throws NegativeBalanceAmountException;
 	String deleteAccount(Long id) throws BankAccountNotFoundException;
 
 	
